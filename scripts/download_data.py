@@ -26,8 +26,9 @@ opt = docopt(__doc__)
 
 def main(file_path, url1, url2):
     """
-    Combines two .csv files from url1 and url2
-    into single dataframe and writes a .csv 
+    Adds an "outcome" column to each of two .csv 
+    files from url1 and url2, combines the .csv's
+    into single dataframe, and writes a .csv 
     to the provided filepaths. .csv's to be
     combined need to have the same columns.
 
@@ -52,7 +53,9 @@ def main(file_path, url1, url2):
         'https://public-data.com/url_def.csv')
     """
     df_1=pd.read_csv(url1)
+    df_1['outcome'] = 'accepted'
     df_2 = pd.read_csv(url2)
+    df_2['outcome'] = 'rejected'
 
     df_combo = df_1.append(df_2)
     df_combo.to_csv(file_path)

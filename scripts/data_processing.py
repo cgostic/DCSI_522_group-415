@@ -66,11 +66,13 @@ def main(file_path, filename_1, filename_2, filename_3):
   # split data into train and validate sets
   X_train, X_validate, y_train, y_validate = train_test_split(X_train, y_train, test_size = 0.2, random_state = 415)
   
-  # feature engineering with count vectorizer
-  cv = CountVectorizer(analyzer='char', ngram_range=(2,8))
-  X_train_transformed = cv.fit_transform(X_train)
-  X_validate_transformed = cv.transform(X_validate)
-  X_test_transformed = cv.transform(X_test)
+  # export split datasets to csv
+  X_train.to_csv(file_path + 'X_train.csv', header = True)
+  X_validate.to_csv(file_path + 'X_validate.csv', header = True)
+  X_test.to_csv(file_path + 'X_test.csv', header = True)
+  y_train.to_csv(file_path + 'y_train.csv', header = True)
+  y_validate.to_csv(file_path + 'y_validate.csv', header = True)
+  y_test.to_csv(file_path + 'y_test.csv', header = True)
 
 if __name__ == "__main__":
     main(opt["--file_path"], opt["--filename_1"], opt["--filename_2"], opt["--filename_3"])

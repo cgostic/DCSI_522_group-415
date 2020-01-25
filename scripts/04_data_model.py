@@ -28,7 +28,7 @@ from sklearn.feature_extraction.text import CountVectorizer
 from sklearn.model_selection import train_test_split, GridSearchCV
 from sklearn.pipeline import Pipeline
 import matplotlib.pyplot as plt
-import subprocess
+import subprocess # pip install subprocess.run
 from docopt import docopt
 
 opt = docopt(__doc__)
@@ -83,8 +83,8 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
   # fit model with trainvalidate dataset
   mnb = MultinomialNB()
   mnb.fit(X_trainvalidate_trs, y_trainvalidate)
-  print('Training error is: ', mnb.score(X_trainvalidate_trs, y_trainvalidate))
-  print('Test error is: ', mnb.score(X_test_trs, y_test))
+  print('Training accuracy is: ', mnb.score(X_trainvalidate_trs, y_trainvalidate))
+  print('Test accuracy is: ', mnb.score(X_test_trs, y_test))
   clf_report = classification_report(
       y_test, mnb.predict(X_test_trs), output_dict=True)
   clf_report_df = pd.DataFrame(clf_report).transpose()

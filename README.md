@@ -31,3 +31,20 @@ python scripts/03_EDA.py --file_path_data="data/" --accepted_plates_csv="accepte
 ```
 Rscript -e "rmarkdown::render('scripts/05_final_report.rmd', output_file = 'docs/final_report.html')"
 ```
+
+# Package Dependencies
+
+### Python
+
+- pandas --0.25.3
+- numpy --1.18.1
+- scikit-learn --0.21.3
+- altair --3.2.0
+- docopt -- 0.6.2
+
+### R
+
+- tidyverse --1.2.1
+- docopt --0.6.1
+- knitr --1.27.2
+

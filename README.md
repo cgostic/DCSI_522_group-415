@@ -25,7 +25,9 @@ python scripts/03_EDA.py --file_path_data="data/" --accepted_plates_csv="accepte
 ```
 
 4. 
-
+```
+python scripts/04_data_model.py --file_path_read="data/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="docs/imgs/" --filename_cl_table="classification_report" --filename_predictor_table="best_predictors"
+```
 
 5. 05_final_report.rmd
 ```

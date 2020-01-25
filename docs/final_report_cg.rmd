@@ -60,6 +60,17 @@ knitr::include_graphics("../docs/imgs/class_proportion_bl.png")
 
 ## Analysis
 
+Based on the above analysis it was proper to optimize the range of n-grams used in `CountVectorizer` and also choose proper `analyzer` for the model. To this end, we used model pipeline to optimize these hyperparameters using `GridSearchCV`. For the model, `MultinomialNB` method was selected. The optimization results gave the best n-grams range of `(2,5)` and `char_wb` for `analyzer`. The optmized model was fit using the training data that provided accuracy of 99.6%, while the test accuracy was 78.3%. The model seems to be overfitting but provides us good benchmark for further improvements. The model seems to have good `precision` and `recall` as shown below
+
+```{r classification report, echo=FALSE, fig.align='center'}
+knitr::include_graphics("../docs/imgs/classification_report.png")
+```
+
+The strongest feature predictors for plate rejection and acceptance are given below. These predictors provide us some information regarding the combination prone to rejection. However, in future, we plan to better visualize these strongest features in better manner.
+
+```{r best predictors, echo=FALSE, fig.align='center'}
+knitr::include_graphics("../docs/imgs/best_predictors.png")
+```
 
 # Results and Conclusions
 

@@ -43,15 +43,15 @@ To address this issue, we undersampled the "accepted" observations to achieve mo
 
 This leaves us with 3646 examples, 2000 for the accepted class, and 1646 for the rejected class. The dataset was separated into 64% train, 16% validation, and 20% test splits before any model or feature optimization took place. 
 
-### MORE ABOUT HOW WE PROCESSED/UNDERSAMPLED  
+## Feature Engineering
 
-To engineer features, we used Sci-kit Learn's `CountVectorizer` transformer to split each `plate` string into character n-grams of a specified length range. For example, if an observed plate was `CATSROCK` and we were including n-grams of length 2-8, the features created would be `CA`, `AT`, `TS`, and so on for length 2; `CAT`, `ATS`, `TSR` and so on for length 3; `CATS`, `ATSR`, `TSRO` and so on for length 4 up to n-grams of length 8 for a total of 28 features. We decided in advance to evaluate n-grams with a minimum length of 2 since single letters or numbers are not relevant to our research question. The maximum number of characters on a plate is 8, so that is the maximum length of n-grams we evaluated. The total set of features engineered from our training set of 2332 observations is 25,889 n-grams varying in length from 2-8. It's expected that any single length-2 features might occur more frequently than a longer-length features, as a 2-character sequence can appear in multiple unique full `plate` observations. It's expected that each length-8 feature occurs only once, as there should not be any duplicate `plate` observations. This behavior is confirmed in the chart below where the distribution of frequency in the training data is plotted for a subset of feature lengths. We see a clear trend in decreased frequency of features with increasing feature length.
+To engineer features, we used Sci-kit Learn's `CountVectorizer` (@sklearn) transformer to split each `plate` string into character n-grams of a specified length range. For example, if an observed plate was `CATSROCK` and we were including n-grams of length 2-8, the features created would be `CA`, `AT`, `TS`, and so on for length 2; `CAT`, `ATS`, `TSR` and so on for length 3; `CATS`, `ATSR`, `TSRO` and so on for length 4 up to n-grams of length 8 for a total of 28 features. We decided in advance to evaluate n-grams with a minimum length of 2 since single letters or numbers are not relevant to our research question. The maximum number of characters on a plate is 8, so that is the maximum length of n-grams we evaluated. The total set of features engineered from our training set of 2332 observations is 25,889 n-grams varying in length from 2-8. It's expected that any single length-2 features might occur more frequently than a longer-length feature, as a 2-character sequence can appear in multiple unique `plate` observations. It's expected that each length-8 feature occurs only once, as there should not be any duplicate `plate` observations. This behavior is confirmed in the chart below where the distribution of frequency in the training data is plotted for a subset of feature lengths. We see a clear trend in decreased frequency of features with increasing feature length.
 
 ```{r ngram count distribution, fig.width=5, fig.height=5, echo=FALSE, fig.align='center'}
 knitr::include_graphics("../docs/imgs/ngram_length_counts.png")
 ```
 
-We can dig a bit deeper and examine the distribution of proportion per class for features of different lengths. 200 samples were drawn from the set of features of each n-gram length. For each feature in a sample, the proportion of times it appeared in each class was calculated. From the distribution of these proportions, displayed below, we see that n-grams of length 2 are most evenly distributed between classes. This indicates that an n-gram of length 2 is less likely to be a strong preditor. In comparison, for features of length 4-8, all features occur exclusively in one class. Therefore, we might expect a longer-length feature to be a better predictor
+We can dig a bit deeper and examine the distribution of proportion per class for features of different lengths. 200 samples were drawn from the set of features of each n-gram length. For each feature in a sample, the proportion of times it appeared in each class was calculated. From the distribution of these proportions, displayed below, we see that n-grams of length 2 are most evenly distributed between classes. This indicates that an n-gram of length 2 is less likely to be a strong preditor. In comparison, for features of length 4-8, all features occur exclusively in one class. Therefore, we might expect a longer-length feature to be a better predictor.
 
 ```{r ngram proportions in classes, echo=FALSE, fig.align='center'}
 knitr::include_graphics("../docs/imgs/class_proportion_bl.png")
@@ -60,24 +60,29 @@ knitr::include_graphics("../docs/imgs/class_proportion_bl.png")
 
 ## Analysis
 
-The multinomial Naive Bayes (`MultinomialNB` (@sklearn) ) algorithm was used to build a classification model to predict whether a license plate was 'accepted' or 'rejected' (found in the outcome column of the data set). Based on the exploratory data analysis it was deemed important to optimize the range of n-grams used in `CountVectorizer` (@sklearn) during feature engineering. We also needed to choose a proper `analyzer` to build the classification model. To this end, we used a model pipeline to optimize these hyperparameters using `GridSearchCV`. (@sklearn) The optimization results gave the best n-grams range of `(2,5)` and `char_wb` for `analyzer`. 
+The multinomial Naive Bayes (`MultinomialNB` (@sklearn) ) algorithm was used to build a classification model to predict whether a license plate was 'accepted' or 'rejected' (found in the outcome column of the data set). We chose to fit a `MultinomialNB` model because the strength of predictors is easily interpretable, and the model performs efficiently on high-dimension datasets. Based on the exploratory data analysis it was deemed important to optimize the range of n-grams used in `CountVectorizer` (@sklearn) during feature engineering. We also needed to choose a proper `analyzer` to build the classification model. To this end, we used a model pipeline to optimize these hyperparameters using `GridSearchCV`. (@sklearn) The optimization results gave the best n-grams range of `(2,5)` and `char_wb` for `analyzer`. 
 
-The **R** (@R) and **Python** (@python) programming languages, and the following R and Python packages were used to preform tha analysis: **Tidyverse** (@tidyverse) and **Dopcopt** (@docopt) libraries and **Altair** (@altair), **Numpy** (@numpy), **Pandas** (@pandas) and **Sci-kit Learn** (@sklearn). The code used to preform the analysis and create this report can be found here: https://github.com/UBC-MDS/DSCI_522_group_415
+_The **R** (@R) and **Python** (@python) programming languages, and the following R and Python packages were used to perform this analysis: **Tidyverse** (@tidyverse) and **Dopcopt** (@docopt) libraries and **Altair** (@altair), **Numpy** (@numpy), **Pandas** (@pandas) and **Sci-kit Learn** (@sklearn). The code used to perform the analysis and create this report can be found in our [Github repository.](https://github.com/UBC-MDS/DSCI_522_group_415)_
 
-# Results and Conclusions
+# Results
 
-The optmized model was fit using the training data that provided accuracy of 99.6%, while the test accuracy was 78.3%. The model seems to be overfitting but provides us good benchmark for further improvements. The model seems to have good `precision` and `recall` as shown below
+The optmized model was fit using the training data that provided accuracy of 99.6%, while the test accuracy was 78.3%. The model seems to be overfitting but provides us good benchmark for further improvements. The model's `precision` and `recall`, as shown below, indicate that the model performs pretty well when predicting both classes which confirms its practical functionality.
 
 ```{r classification report, echo=FALSE, fig.align='center'}
 knitr::include_graphics("../docs/imgs/classification_report.png")
 ```
 
-The strongest feature predictors for plate rejection and acceptance are given below. These predictors provide us some information regarding the combination prone to rejection. However, in future, we plan to better visualize these strongest features in better manner.
+The strongest feature predictors for plate rejection and acceptance are given below. These predictors provide us some information regarding the combinations most prone to rejection. 
 
 ```{r best predictors, echo=FALSE, fig.align='center'}
 knitr::include_graphics("../docs/imgs/best_predictors.png")
 ```
 
+# Conclusions
+
+The model evaluation metrics shown above indicate that you can, with decent accuracy, predict whether or not a vanity plate that "follows the rules" will be rejected by the NYSDMV. Furthermore, we identified the top 25 strongest predictors of rejection that the NYSDMV may consider adding to their re-guide to make their initial screening more effective, and ultimately, save the clerical staff significant time re-processing previously rejected applications. 
+
+We recognize room for imporovement in our analysis, including testing other classification models, better visualizing the features identified as "best predictors" of rejection, and performing feature selection. It's clear that many of the features are highly correlated, (i.e. `inya`, `iny`), and some even repeated. Removing repeated and correlated features could result in a higher accuracy.
 
 # References
 

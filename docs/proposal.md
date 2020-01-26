@@ -5,10 +5,12 @@ Authors: Keanna Knebel, Cari Gostic, Furqan Khan
 ## Project Proposal
 
 ### Dataset  
-For this project, we'll be using data on applications for vanity license plates submitted to the NYDMV. This dataset is a result of a FOIL request by the WYNC public radio station and therefore is within the public domain.  It covers vanity license plate applications from 10/1/2010 to 9/26/2014. The dataset is hosted on github [here.](https://github.com/datanews/license-plates)  
+For this project, we'll be using data on applications for vanity license plates submitted to the NYDMV. This dataset is a result of a Freedom of Information Act (FOIA) request by the WYNC public radio station and therefore is within the public domain.  It covers vanity license plate applications from 10/1/2010 to 9/26/2014. The dataset is hosted on github [here.](https://github.com/datanews/license-plates)  
 
 ### Research Question  
-What features are the strongest predictors of a rejected license plate?
+In this project, we will attempt to identify patterns in the existing ambiguity of vanity plate cancellations. Specifically, we will create a classification model to answer the following predictive questions:
+>- **What features are the strongest predictors of a rejected license plate?**
+>- **Can you predict if a vanity plate that passes all rules (laid out in the cancellation procedure and red-guide) will be accepted or rejected by the NYS DMV?**
 
 ### EDA
 The dataset set contains two classifications of `plate` configurations, accepted and rejected. A useful visualization that we created in our EDA was a bar graph comparing the counts of observations for each class. The analysis showed that there is significant class imbalance. Out of 133,636 total examples, only 1646 belong to the rejected class, which is only 1.23% of the total examples. This is important to note, because not accounting for this imbalance will likely result in a model that achieves a very high overall score, but performs very poorly when predicting the rejected class.  

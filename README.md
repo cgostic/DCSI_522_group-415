@@ -38,7 +38,7 @@ python scripts/04_data_model.py --file_path_read="data/" --filename_x_train="X_t
 
 5. 05_final_report.rmd
 ```
-Rscript -e "rmarkdown::render('scripts/05_final_report.rmd', output_file = 'docs/final_report.html')"
+Rscript -e "rmarkdown::render('scripts/05_generate_report.rmd', output_file = 'docs/final_report.html')"
 ```
 
 ## Package Dependencies

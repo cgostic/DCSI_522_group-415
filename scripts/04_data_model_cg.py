@@ -43,7 +43,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     # filename_y_test = 'y_test.csv'
     # file_path_write = 'docs/imgs/'
     
-    # command line usage: python scripts/04_data_model.py --file_path_read="data/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="docs/imgs/"
+    # command line usage: python scripts/04_data_model_cg.py --file_path_read="data/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="docs/imgs/"
     
     # read the training, testing, and validation data
     X_train = np.squeeze(pd.read_csv(file_path_read+filename_x_train, index_col=0))
@@ -108,12 +108,13 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
         color = 'variable:N'
         )
 
-    text = alt.Chart(tr_v_plot_df.query('variable == "Validation error"')).mark_text(dy = 7).encode(
+    text = alt.Chart(tr_v_plot_df.query('variable == "Cross-Val Training error (cv = 10)"')).mark_text(dy = 13).encode(
         x = alt.X('Number of Features:Q'),
         y = alt.Y('value:Q', title = 'Accuracy score'),
         text = alt.Text('n-gram_range:N'))
 
-    (line + point + text).properties(width = 700).save(file_path_write + 'train_val_error.png', scale_factor = 2)
+    (line + point + text).properties(width = 700,
+         background = 'white').save(file_path_write + 'train_val_error.png', scale_factor = 2)
 
     # Train model with chosen n-gram length range (2,2)
     cv_mnb = CountVectorizer(analyzer = 'char', ngram_range = (2,2))
@@ -168,7 +169,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
         least_coef = min(feat_df['weights'])
         # check how many features share that weight
         print("Number of features tied for strongest predictor:", len(feat_df.query('weights == '+str(least_coef))))
-        negative = feat_df.query('weights == '+str(least_coef))[['features']].sample(n = 50, random_stat = 415).reset_index(drop=True)
+        negative = feat_df.query('weights == '+str(least_coef))[['features']].sample(n = 50, random_state = 415).reset_index(drop=True)
         #negative = negative.sample(n = 50).reset_index(drop=True)
         features_100 = pd.concat([negative.iloc[:10].reset_index(drop = True),
             negative.iloc[10:20].reset_index(drop = True),

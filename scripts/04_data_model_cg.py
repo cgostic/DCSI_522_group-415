@@ -92,25 +92,25 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
         v_err.append(mnb.score(X_validate_trs, y_validate))
         ng_l.append(str(ng))
 
-    tr_v_df = pd.DataFrame({'Number of Features':num_f, 'Training error':tr_err, 'Validation error':v_err, 'n-gram_range':ng_l})
+    tr_v_df = pd.DataFrame({'Number of Features':num_f, 'Cross-Val Training error (cv = 10)':tr_err, 'Validation error':v_err, 'n-gram_range':ng_l})
     tr_v_plot_df = tr_v_df.melt(['Number of Features', 'n-gram_range'])
 
     # Plot training and validation error vs. number of features
     line = alt.Chart(tr_v_plot_df).mark_line().encode(
         x = alt.X('Number of Features:Q'),
-        y = alt.Y('value:Q'),
+        y = alt.Y('value:Q', title = 'Accuracy score'),
         color = 'variable:N'
         )
 
     point = alt.Chart(tr_v_plot_df).mark_point().encode(
         x = alt.X('Number of Features:Q'),
-        y = alt.Y('value:Q'),
+        y = alt.Y('value:Q', title = 'Accuracy score'),
         color = 'variable:N'
         )
 
     text = alt.Chart(tr_v_plot_df.query('variable == "Validation error"')).mark_text(dy = 7).encode(
         x = alt.X('Number of Features:Q'),
-        y = alt.Y('value:Q'),
+        y = alt.Y('value:Q', title = 'Accuracy score'),
         text = alt.Text('n-gram_range:N'))
 
     (line + point + text).properties(width = 700).save(file_path_write + 'train_val_error.png', scale_factor = 2)
@@ -168,7 +168,8 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
         least_coef = min(feat_df['weights'])
         # check how many features share that weight
         print("Number of features tied for strongest predictor:", len(feat_df.query('weights == '+str(least_coef))))
-        negative = feat_df.sort_values(by = 'weights').head(200).reset_index()[['features']]
+        negative = feat_df.query('weights == '+str(least_coef))[['features']].sample(n = 50, random_stat = 415).reset_index(drop=True)
+        #negative = negative.sample(n = 50).reset_index(drop=True)
         features_100 = pd.concat([negative.iloc[:10].reset_index(drop = True),
             negative.iloc[10:20].reset_index(drop = True),
             negative.iloc[20:30].reset_index(drop = True),
@@ -178,7 +179,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
         file_name_png = file_path_write + 'predictors_'+str(ng)[1]+'_'+str(ng)[-2]+'.png'
         features_100.to_html(file_name_html, index = False, header = False)
         subprocess.call(
-        ['wkhtmltoimage -f png --width 0 ' + file_name_html + " " + file_name_png], shell=True)
+            ['wkhtmltoimage -f png --width 0 ' + file_name_html + " " + file_name_png], shell=True)
 
     
   

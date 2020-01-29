@@ -6,7 +6,7 @@ always_allow_html: true
 output: 
   html_document:
     toc: true
-bibliography: vanity_plates.bib
+bibliography: ../docs/vanity_plates.bib
 ---
 
 **Warning: Some of the character sequences references in this report contain profanity and lewd language. Please be advised.**

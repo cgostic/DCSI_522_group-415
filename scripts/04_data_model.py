@@ -4,7 +4,7 @@
 '''This script reads six .csv files.
 
 
-Usage: scripts/data_model.py --file_path_read=<file_path_read> --filename_x_train=<filename_x_train> --filename_x_validate=<filename_x_validate> --filename_x_test=<filename_x_test> --filename_y_train=<filename_y_train> --filename_y_validate=<filename_y_validate> --filename_y_test=<filename_y_test> --filename_path_write=<filename_path_write>
+Usage: scripts/04_data_model.py --file_path_read=<file_path_read> --filename_x_train=<filename_x_train> --filename_x_validate=<filename_x_validate> --filename_x_test=<filename_x_test> --filename_y_train=<filename_y_train> --filename_y_validate=<filename_y_validate> --filename_y_test=<filename_y_test> --filename_path_write=<filename_path_write>
 
 Options:
 --file_path_read=<file_path_read>  Path to data folder of .csv files

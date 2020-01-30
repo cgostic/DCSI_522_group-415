@@ -6,7 +6,7 @@ always_allow_html: true
 output: 
   html_document:
     toc: true
-bibliography: ../docs/vanity_plates.bib
+bibliography: vanity_plates.bib
 ---
 
 **Warning: Some of the character sequences references in this report contain profanity and lewd language. Please be advised.**
@@ -36,7 +36,7 @@ Definitive answers to these questions will benefit the the NYSDMV by reducing th
 The datasets used in this analysis include all accepted vanity plate submissions and rejected vanity plate submissions between October, 2010 and September, 2014. @wnyc The datasets were sourced from the WNYC Data News Team's license-plates Repository and can be found [here.](https://github.com/datanews/license-plates) The rejected plates were rejected during the second stage of review. In other words, they do not contain any character strings from the red-guide. The raw data has two columns, `Date` and `plate`, where `Date` is not included in this analysis. Another column `outcome`, was added before combining the accepted and rejected datasets to indicate the class of the observation as "accepted" or "rejected". The `plate` column contains the submitted alphanumeric character string of length 2 to 8. An initial evaluation shows a large imbalance in the count of observations for the two classes, with 131,990 in class "accepted" and 1,646 in class "rejected". 
 
 ```{r class imbalance image, echo=FALSE, fig.align='center'}
-knitr::include_graphics("../docs/imgs/examples_per_classification.png")
+knitr::include_graphics("../results/examples_per_classification.png")
 ```
 
 To address this issue, we undersampled the "accepted" observations to achieve more balanced counts per class. After evaluating precision and recall values for each class with different number of observations for the "accepted" class, we decided to randomly sample 2000 observations to create a reduced dataset to use to train our model. Though we understand that oversampling through bootstrapping, SMOTE or some other method is preferable, we determined that we had too few observations in the "rejected" class to effectively bolster the class near the observation count in the "accepted class". Especially given that our dataset has only a single column, and we must engineer our features. 
@@ -48,13 +48,13 @@ This leaves us with 3646 examples, 2000 for the accepted class, and 1646 for the
 To engineer features, we used Sci-kit Learn's `CountVectorizer` (@sklearn) transformer to split each `plate` string into character n-grams of a specified length range. For example, if an observed plate was `CATSROCK` and we were including n-grams of length 2-8, the features created would be `CA`, `AT`, `TS`, and so on for length 2; `CAT`, `ATS`, `TSR` and so on for length 3; `CATS`, `ATSR`, `TSRO` and so on for length 4 up to n-grams of length 8 for a total of 28 features. We decided in advance to evaluate n-grams with a minimum length of 2 since single letters or numbers are not relevant to our research question. The maximum number of characters on a plate is 8, so that is the maximum length of n-grams we evaluated. The total set of features engineered from our training set of 2332 observations is 25,889 n-grams varying in length from 2-8. It's expected that any single length-2 features might occur more frequently than a longer-length feature, as a 2-character sequence can appear in multiple unique `plate` observations. It's expected that each length-8 feature occurs only once, as there should not be any duplicate `plate` observations. This behavior is confirmed in the chart below where the distribution of frequency in the training data is plotted for a subset of feature lengths. We see a clear trend in decreased frequency of features with increasing feature length.
 
 ```{r ngram count distribution, fig.width=5, fig.height=5, echo=FALSE, fig.align='center'}
-knitr::include_graphics("../docs/imgs/ngram_length_counts.png")
+knitr::include_graphics("../results/ngram_length_counts.png")
 ```
 
 We can dig a bit deeper and examine the distribution of proportion per class for features of different lengths. 200 samples were drawn from the set of features of each n-gram length. For each feature in a sample, the proportion of times it appeared in each class was calculated. From the distribution of these proportions, displayed below, we see that n-grams of length 2 are most evenly distributed between classes. This indicates that an n-gram of length 2 is less likely to be a strong preditor. In comparison, for features of length 4-8, all features occur exclusively in one class. Therefore, we might expect a longer-length feature to be a better predictor.
 
 ```{r ngram proportions in classes, echo=FALSE, fig.align='center'}
-knitr::include_graphics("../docs/imgs/class_proportion_bl.png")
+knitr::include_graphics("../results/class_proportion_bl.png")
 ```
 
 
@@ -63,7 +63,7 @@ knitr::include_graphics("../docs/imgs/class_proportion_bl.png")
 The multinomial Naive Bayes (`MultinomialNB` (@sklearn) ) algorithm was used to build a classification model to predict whether a license plate was 'accepted' or 'rejected' (found in the outcome column of the data set). We chose to fit a `MultinomialNB` model because the strength of predictors is easily interpretable, and the model performs efficiently on high-dimension datasets. Based on the exploratory data analysis it was deemed important to optimize the range of n-grams used in `CountVectorizer` (@sklearn) during feature engineering. We hard-coded the `analyzer` of `CountVectorizer` to `char` in order to create features without a word-boundary restirction. Then, using a model pipeline to optimize `ngram_range` using `GridSearchCV`, (@sklearn) the optimum model was shown to have n-grams in the range of `(2,3)`. On inspection of cross-walidated training error compared to the validation error for different `ngram_range` values, we can see that there are better optimal n-gram ranges than `(2,3)` when we consider the number of features. As shown below, `(2,2)` is likely a more optimal `ngram_range` given that it achieves similar accuracy scores, is less overfit, and includes significantly fewer features (over 6,000 fewer) than the `(2,3)` range. 
 
 ```{r ngram training and validation error, echo=FALSE, fig.align='center'}
-knitr::include_graphics("../docs/imgs/train_val_error.png")
+knitr::include_graphics("../results/train_val_error.png")
 ```
 
 Additionally, using an `ngram_range = (2,2)` is preferable in that it greatly reduces the number of correlated features, and reduces model overfitting. For example, if we included all 2- and 3-length n-grams, every 3-length n-gram would be correlated to two 2-length n-grams (e.g. `CAT` is made up of `CA`, `AT`). Every more complex feature we could add can be described by the combination of two or more simple length-2 n-grams. Longer n-grams are also more specific to the training dataset, and are therefore less likely to generalize to outside data. Our `MultinomialNB`, run against a feature set transformed by a `CountVectorizer` with with `analyzer = 'char'` and `ngram_range = (2,2)`, achieves the following validation model metrics.
@@ -71,7 +71,7 @@ Additionally, using an `ngram_range = (2,2)` is preferable in that it greatly re
 
 Validation evaluation metrics:
 ```{r eval metrics validation, echo=FALSE, fig.align='center'}
-knitr::include_graphics("../docs/imgs/clf_val_report.png")
+knitr::include_graphics("../results/clf_val_report.png")
 ```
 
 Though the recall for the rejected class is fairly low, it's precision is decent. This is not very concerning, as in the context of license plate submissions, false negatives can be considered more harmful than fasle positives.  As an applicant, I would rather be rejected in the initial screening phase only if I was positive that my application would be rejected in the second screening phase. If the initial screening phase was overly conservative, ther would be no need for a secondary screening phase, and any application would be more likely to be rejected even if it were completely acceptable.
@@ -82,13 +82,13 @@ The optimized model shows simlar accuracy on the testing dataset. As seen below,
 
 Testing evaluation metrics
 ```{r eval metrics testing, echo=FALSE, fig.align='center'}
-knitr::include_graphics("../docs/imgs/clf_test_report.png")
+knitr::include_graphics("../results/clf_test_report.png")
 ```
 
 There are 211 features tied for the strongest feature predictors for plate rejection. A sample of 50 of these is shown below. 
 
 ```{r best predictors, echo=FALSE, fig.align='center'}
-knitr::include_graphics("../docs/imgs/predictors_2_2.png")
+knitr::include_graphics("../results/predictors_2_2.png")
 ```
 
 # Conclusions

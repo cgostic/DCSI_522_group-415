@@ -7,7 +7,7 @@ combines them into a single dataframe, and exports this dataframe
 as a .csv to the file_path provided. This script takes file_name, 
 url1, url2, and file_path as arguments.
 
-Usage: scripts/download_data.R <file_path> <filename_1> <url1> <filename_2> <url2>
+Usage: scripts/download_data.R --file_path=<file_path> --filename_1=<filename_1> --url1=<url1> --filename_2=<filename_2> --url2=<url2>
 " -> doc
 
 # file_path = './data/'

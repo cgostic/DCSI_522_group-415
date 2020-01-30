@@ -19,8 +19,8 @@ results/examples_per_classification.png results/class_proportion_bl.png ngram_le
 	python scripts/03_EDA.py --file_path_data=data/ --accepted_plates_csv=accepted_plates.csv --rejected_plates_csv=rejected_plates.csv --reduced_plate_csv=full_vanity_plate_data.csv --X_train_csv=X_train.csv --y_train_csv=y_train.csv --file_path_img=results/
 
 # create and tune data model 
-results/train_val_error.png results/clf_val_report.png results/clf_test_report.png results/predictors_2_2.png results/predictors_3_3.png results/predictors_4_4.png : scripts/04_data_model_cg.py data/X_train.csv data/X_validate.csv data/X_test.csv data/y_train.csv data/y_validate.csv data/y_test.csv
-	python scripts/04_data_model_cg.py --file_path_read=data/ --filename_x_train=X_train.csv --filename_x_validate=X_validate.csv --filename_x_test=X_test.csv --filename_y_train=y_train.csv --filename_y_validate=y_validate.csv --filename_y_test=y_test.csv --filename_path_write=results/
+results/train_val_error.png results/clf_val_report.png results/clf_test_report.png results/predictors_2_2.png results/predictors_3_3.png results/predictors_4_4.png : scripts/04_data_model.py data/X_train.csv data/X_validate.csv data/X_test.csv data/y_train.csv data/y_validate.csv data/y_test.csv
+	python scripts/04_data_model.py --file_path_read=data/ --filename_x_train=X_train.csv --filename_x_validate=X_validate.csv --filename_x_test=X_test.csv --filename_y_train=y_train.csv --filename_y_validate=y_validate.csv --filename_y_test=y_test.csv --filename_path_write=results/
 
 # render final report
 docs/05_generate_report.html : docs/05_generate_report.Rmd docs/vanity_plates.bib results/examples_per_classification.png results/class_proportion_bl.png ngram_length_counts.png results/train_val_error.png results/clf_val_report.png results/clf_test_report.png results/predictors_2_2.png results/predictors_3_3.png results/predictors_4_4.png 

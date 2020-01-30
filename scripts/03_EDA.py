@@ -15,7 +15,7 @@
   folder. 
 
 
-Usage: scripts/EDA.py --file_path_data=<file_path_data> --accepted_plates_csv=<accepted_plates_csv> --rejected_plates_csv=<rejected_plates_csv> --reduced_plate_csv=<reduced_plate_csv> --X_train_csv=<X_train_csv> --y_train_csv=<y_train_csv> --file_path_img=<file_path_img>
+Usage: scripts/03_EDA.py --file_path_data=<file_path_data> --accepted_plates_csv=<accepted_plates_csv> --rejected_plates_csv=<rejected_plates_csv> --reduced_plate_csv=<reduced_plate_csv> --X_train_csv=<X_train_csv> --y_train_csv=<y_train_csv> --file_path_img=<file_path_img>
 
 Options:
 --file_path_data=<file_path_data>  Path to data folder of .csv files
@@ -145,13 +145,13 @@ def main(file_path_data, accepted_plates_csv, rejected_plates_csv, reduced_plate
             p.extend([num_per_class.at['accepted', col]/total_counts, 
             num_per_class.at['rejected', col]/total_counts])       
     cbl_prop_df = pd.DataFrame({'n-gram': ng, 'class':class_1, 'p':p, 'ng_length':ng_length})
-
+    cbl_prop_df.ng_length.loc[(cbl_prop_df['ng_length'] > 3)] = '> 4'
     # Plot distribution of proportion per class per ngram length
     cl = []
-    l = [str(i) for i in range(2,9)]
+    l = ['2','3',"'> 4'"]
     for i in l:
         cl.append(p_chart_grid(cbl_prop_df.query('ng_length == '+i), i))
-    chart_grid = (((cl[0] | cl [1] | cl[2]) & (cl[3] | cl [4] | cl[5]) & (cl[6])
+    chart_grid = (((cl[0] | cl [1] | cl[2])
         ).properties(title = "Distribution of Class Proportion by n-gram Length: 200 Samples"
         ).configure_axis(labelFontSize=15,
                         titleFontSize=20

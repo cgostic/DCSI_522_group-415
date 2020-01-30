@@ -176,7 +176,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
             negative.iloc[20:30].reset_index(drop = True),
             negative.iloc[30:40].reset_index(drop = True),
             negative.iloc[40:50].reset_index(drop = True)], axis = 1)
-        file_name_html = file_path_write + 'predictors_'+str(ng)[1]+'_'+str(ng)[-2]+'.html'
+        file_name_html = file_path_write + 'predictors'+str(ng)[1]+'_'+str(ng)[-2]+'.html'
         file_name_png = file_path_write + 'predictors_'+str(ng)[1]+'_'+str(ng)[-2]+'.png'
         features_100.to_html(file_name_html, index = False, header = False)
         subprocess.call(

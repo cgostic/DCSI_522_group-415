@@ -21,9 +21,9 @@ To replicate the analysis performed in this project, clone this GitHub repositor
 Rscript scripts/01_download_data.R "data/" "accepted_plates.csv" "https://raw.githubusercontent.com/datanews/license-plates/master/accepted-plates.csv" "rejected_plates.csv" "https://raw.githubusercontent.com/datanews/license-plates/master/rejected-plates.csv"
 ```
 
-2. 02_data_preprocessing.py
+2. 02_data_processing.py
 ```
-python scripts/02_data_preprocessing.py --file_path="data/" --accepted_plates_csv="accepted_plates.csv" --rejected_plates_csv="rejected_plates.csv" --reduced_plate_csv= "full_vanity_plate_data.csv"" --X_test_csv="X_test.csv" --X_train_csv="X_train.csv" --X_validate_csv="X_validate.csv" --y_test_csv="y_test.csv" --y_train_csv="y_train.csv" --y_validate_csv="y_validate.csv"
+python scripts/02_data_processing.py --file_path="data/" --accepted_plates_csv="accepted_plates.csv" --rejected_plates_csv="rejected_plates.csv" --reduced_plates_csv= "full_vanity_plate_data.csv"
 ```
 
 3. 03_EDA.py
@@ -33,10 +33,10 @@ python scripts/03_EDA.py --file_path_data="data/" --accepted_plates_csv="accepte
 
 4. 04_data_model.py
 ```
-python scripts/04_data_model.py --file_path_read="data/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="docs/imgs/" --filename_cl_table="classification_report" --filename_predictor_table="best_predictors"
+python scripts/04_data_model_cg.py --file_path_read="data/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="docs/imgs/"
 ```
 
-5. 05_final_report.rmd
+5. 05_general_report.rmd
 ```
 Rscript -e "rmarkdown::render('scripts/05_generate_report.rmd', output_file = 'docs/final_report.html')"
 ```

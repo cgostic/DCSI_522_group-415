@@ -28,7 +28,7 @@ from docopt import docopt
 
 opt = docopt(__doc__)
 
-def main(file_path, accepted_plates_csv, rejected_plates_csv, reduced_plates_csv)
+def main(file_path, accepted_plates_csv, rejected_plates_csv, reduced_plates_csv):
 
   # Read in csv files and add outcome column as either "accepted" or "rejected"
   # for each csv

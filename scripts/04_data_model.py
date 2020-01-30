@@ -43,7 +43,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     # filename_y_test = 'y_test.csv'
     # file_path_write = 'docs/imgs/'
     
-    # command line usage: python scripts/04_data_model_cg.py --file_path_read="data/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="docs/imgs/"
+    # command line usage: python scripts/04_data_model.py --file_path_read="data/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="results/"
     
     # read the training, testing, and validation data
     X_train = np.squeeze(pd.read_csv(file_path_read+filename_x_train, index_col=0))

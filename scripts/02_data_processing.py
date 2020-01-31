@@ -9,10 +9,11 @@
  a file_path for the .csv data files, 2 filenames for the 
  unprocessed data and a filename for the reduced dataset.
 
-Usage: scripts/02_data_processing.py --file_path=<file_path> --accepted_plates_csv=<accepted_plates_csv> --rejected_plates_csv=<rejected_plates_csv> --reduced_plates_csv=<reduced_plates_csv> 
+Usage: scripts/02_data_processing.py --file_path_read=<file_path_read> --file_path_write=<file_path_write>  --accepted_plates_csv=<accepted_plates_csv> --rejected_plates_csv=<rejected_plates_csv> --reduced_plates_csv=<reduced_plates_csv> 
 
 Options:
---file_path=<file_path>  Path to data folder of .csv files
+--file_path_read=<file_path_write>  Path to raw data folder of .csv files
+--file_path_write=<file_path_write> Path to processed data folder
 --accepted_plates_csv=<accepted_plates_csv> filename of .csv with positive target observations
 --rejected_plates_csv=<rejected_plates_csv> filename of .csv with negative target observations
 --reduced_plates_csv=<reduced_plates_csv> filename of .csv containing combined and reduced data
@@ -28,18 +29,19 @@ from docopt import docopt
 
 opt = docopt(__doc__)
 
-def main(file_path, accepted_plates_csv, rejected_plates_csv, reduced_plates_csv):
+def main(file_path_read, file_path_write, accepted_plates_csv, rejected_plates_csv, reduced_plates_csv):
 
   # Read in csv files and add outcome column as either "accepted" or "rejected"
   # for each csv
-  # file_path = 'data/'
+  # file_path_read = 'data/raw/'
+  # file_path_write = 'data/processed/'
   # accepted_plates_csv = 'accepted_plates.csv'
   # rejected_plates_csv = 'rejected_plates.csv'
   # reduced_plate_csv = 'full_vanity_plate_data.csv'
   
-  accepted_df =pd.read_csv(file_path + accepted_plates_csv, index_col = 0)
+  accepted_df =pd.read_csv(file_path_read + accepted_plates_csv, index_col = 0)
   accepted_df['outcome'] = 'accepted'
-  rejected_df = pd.read_csv(file_path + rejected_plates_csv, index_col = 0)
+  rejected_df = pd.read_csv(file_path_read + rejected_plates_csv, index_col = 0)
   rejected_df['outcome'] = 'rejected'
   
   # Undersample accepted observations (by taking random sample of 2000)
@@ -52,7 +54,7 @@ def main(file_path, accepted_plates_csv, rejected_plates_csv, reduced_plates_csv
   
   # combine dataframe and save
   combo_df = reduced_accepted.append(rejected_df)
-  combo_df.to_csv(file_path + reduced_plates_csv)
+  combo_df.to_csv(file_path_write + reduced_plates_csv)
   
   # split data into train and test sets
   X = combo_df['plate']
@@ -66,13 +68,13 @@ def main(file_path, accepted_plates_csv, rejected_plates_csv, reduced_plates_csv
   X_train, X_validate, y_train, y_validate = train_test_split(X_train, y_train, test_size = 0.2, random_state = 415)
   
   # export split datasets to csv
-  X_train.to_csv(file_path + 'X_train.csv', header = True)
-  X_validate.to_csv(file_path + 'X_validate.csv', header = True)
-  X_test.to_csv(file_path + 'X_test.csv', header = True)
-  y_train.to_csv(file_path + 'y_train.csv', header = True)
-  y_validate.to_csv(file_path + 'y_validate.csv', header = True)
-  y_test.to_csv(file_path + 'y_test.csv', header = True)
+  X_train.to_csv(file_path_write + 'X_train.csv', header = True)
+  X_validate.to_csv(file_path_write + 'X_validate.csv', header = True)
+  X_test.to_csv(file_path_write + 'X_test.csv', header = True)
+  y_train.to_csv(file_path_write + 'y_train.csv', header = True)
+  y_validate.to_csv(file_path_write + 'y_validate.csv', header = True)
+  y_test.to_csv(file_path_write + 'y_test.csv', header = True)
 
 
 if __name__ == "__main__":
-    main(opt["--file_path"], opt["--accepted_plates_csv"], opt["--rejected_plates_csv"], opt["--reduced_plates_csv"])
+    main(opt["--file_path_read"], opt["--file_path_write"], opt["--accepted_plates_csv"], opt["--rejected_plates_csv"], opt["--reduced_plates_csv"])

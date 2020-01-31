@@ -15,10 +15,11 @@
   folder. 
 
 
-Usage: scripts/03_EDA.py --file_path_data=<file_path_data> --accepted_plates_csv=<accepted_plates_csv> --rejected_plates_csv=<rejected_plates_csv> --reduced_plate_csv=<reduced_plate_csv> --X_train_csv=<X_train_csv> --y_train_csv=<y_train_csv> --file_path_img=<file_path_img>
+Usage: scripts/03_EDA.py --file_path_raw=<file_path_data> --file_path_pro=<file_path_pro> --accepted_plates_csv=<accepted_plates_csv> --rejected_plates_csv=<rejected_plates_csv> --reduced_plate_csv=<reduced_plate_csv> --X_train_csv=<X_train_csv> --y_train_csv=<y_train_csv> --file_path_img=<file_path_img>
 
 Options:
---file_path_data=<file_path_data>  Path to data folder of .csv files
+--file_path_raw=<file_path_data>  Path to raw data folder of .csv files
+--file_path_pro=<file_path_pro> Path to processed data folder
 --accepted_plates_csv=<accepted_plates_csv> filename of .csv with all accepted plates
 --rejected_plates_csv=<rejected_plates_csv> filename of .csv with all negative plates
 --reduced_plate_csv=<reduced_plate_csv> filename of .csv of undersampled accepted plates combined with rejected plates
@@ -27,7 +28,8 @@ Options:
 --file_path_img=<file_path_img> filepath to folder where images should be stored
 '''
 
-# file_path_data = 'data/'
+# file_path_raw = 'data/raw/'
+# file_path_pro='data/processed/'
 # accepted_plates_csv = 'accepted_plates.csv'
 # rejected_plates_csv = 'rejected_plates.csv'
 # reduced_plate_csv = 'full_vanity_plate_data.csv'
@@ -47,13 +49,13 @@ from docopt import docopt
 
 opt = docopt(__doc__)
 
-def main(file_path_data, accepted_plates_csv, rejected_plates_csv, reduced_plate_csv, X_train_csv, y_train_csv, file_path_img):
+def main(file_path_raw, file_path_pro, accepted_plates_csv, rejected_plates_csv, reduced_plate_csv, X_train_csv, y_train_csv, file_path_img):
     # Load datasets
-    full_rejected = pd.read_csv(file_path_data + rejected_plates_csv)
-    full_accepted = pd.read_csv(file_path_data + accepted_plates_csv)
-    reduced_plate_df=pd.read_csv(file_path_data + reduced_plate_csv)
-    X_train = pd.read_csv(file_path_data + X_train_csv, usecols = ['plate'])
-    y_train = pd.read_csv(file_path_data + y_train_csv, usecols = ['outcome'])
+    full_rejected = pd.read_csv(file_path_raw + rejected_plates_csv)
+    full_accepted = pd.read_csv(file_path_raw + accepted_plates_csv)
+    reduced_plate_df=pd.read_csv(file_path_pro + reduced_plate_csv)
+    X_train = pd.read_csv(file_path_pro + X_train_csv, usecols = ['plate'])
+    y_train = pd.read_csv(file_path_pro + y_train_csv, usecols = ['outcome'])
 
     # Transform X_train dataset using countvectorizer
     cv = CountVectorizer(analyzer = 'char', ngram_range=(2,8))
@@ -63,7 +65,7 @@ def main(file_path_data, accepted_plates_csv, rejected_plates_csv, reduced_plate
     # fit and transform X_train via CountVectorizer
     X_train_transformed = cv.fit_transform(X_train['plate'])
     # Make sure transformed data is correct shape
-    assert X_train_transformed.shape == (2332, 25889), 'sparse matrix should be of shape 2332 x 25889'
+    assert X_train_transformed.shape == (2332, 25889), 'sparse matrix should be of shape 2332 x 25889 to reproduce results'
 
     # Explore full dataset of all rejected and accepted plates
     # Create outcome column
@@ -96,16 +98,16 @@ def main(file_path_data, accepted_plates_csv, rejected_plates_csv, reduced_plate
 
     n_g_len_chart = (alt.Chart(counts.query('ng_length%2 == 0')).mark_bar().encode(
             x = alt.X('counts:O', 
-                title = "Frequency of appearance in plates"),
+                title = "Frequency of given ngram in training data"),
                 #scale=alt.Scale(domain = (0,89))),
-            y = alt.Y("count()", scale=alt.Scale(type='log', base=10), title = 'Count'),
+            y = alt.Y("count()", scale=alt.Scale(type='log', base=10), title = 'Ngrams with X Freq.'),
             facet = alt.Facet('ng_length:N', title = 'n-gram length')
-        ).configure_axis(labelFontSize=15,titleFontSize=20
-        ).configure_header(labelFontSize=14
+        ).configure_axis(labelFontSize=15,titleFontSize=10
+        ).configure_header(labelFontSize=15
         ).configure_title(fontSize=20, anchor = 'middle'
-        ).properties(title = "Counts of n-grams by length", 
+        ).properties(title = "Counts of n-gram frequency by length", 
                     width = 400, 
-                    height = 70, 
+                    height = 80, 
                     columns = 1,
                     background = 'white'))
 
@@ -184,7 +186,8 @@ def p_chart_grid(df, i):
                     height = 200, title = "Length "+i))
                 
 if __name__ == "__main__":
-    main(opt["--file_path_data"], 
+    main(opt["--file_path_raw"],
+    opt["--file_path_pro"],
     opt["--accepted_plates_csv"], 
     opt["--rejected_plates_csv"], 
     opt["--reduced_plate_csv"],

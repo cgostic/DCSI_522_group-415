@@ -34,7 +34,7 @@ opt = docopt(__doc__)
 def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test, filename_y_train, filename_y_validate, filename_y_test, file_path_write):
   
     # Read csv files of X and y components of data
-    # file_path_read = 'data/'
+    # file_path_read = 'data/processed/'
     # filename_x_train = 'X_train.csv'
     # filename_x_validate = 'X_validate.csv'
     # filename_x_test = 'X_test.csv'
@@ -43,7 +43,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     # filename_y_test = 'y_test.csv'
     # file_path_write = 'results/'
     
-    # command line usage: python scripts/04_data_model.py --file_path_read="data/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="results/"
+    # command line usage: python scripts/04_data_model.py --file_path_read="data/processed/" --filename_x_train="X_train.csv" --filename_x_validate="X_validate.csv" --filename_x_test="X_test.csv" --filename_y_train="y_train.csv" --filename_y_validate="y_validate.csv" --filename_y_test="y_test.csv" --filename_path_write="results/"
     
     # read the training, testing, and validation data
     X_train = np.squeeze(pd.read_csv(file_path_read+filename_x_train, index_col=0))
@@ -55,6 +55,14 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     y_validate = np.squeeze(pd.read_csv(
         file_path_read+filename_y_validate, index_col=0))
     y_test = np.squeeze(pd.read_csv(file_path_read+filename_y_test, index_col=0))
+    
+    # Test that data read in is correct to reproduce results
+    assert X_train.shape == (2332,), "X_train is incorrect shape"
+    assert sum(X_train.index) == 87392513, "X_train has incorrect observations"
+    assert y_train.shape == (2332,), "y_train is incorrect shape"
+    assert X_validate.shape == (584,), "X_validate has incorrect shape"
+    assert sum(X_validate.index) == 21381421, "X_validate has correct observations"
+    assert y_validate.shape == (584,),"y_validate has incorrect shape"
 
 
     pipeline = Pipeline(steps=[
@@ -99,22 +107,28 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     line = alt.Chart(tr_v_plot_df).mark_line().encode(
         x = alt.X('Number of Features:Q'),
         y = alt.Y('value:Q', title = 'Accuracy score'),
-        color = 'variable:N'
+        color = alt.Color('variable:N', legend = alt.Legend(title = "", orient = 'bottom'))
         )
 
     point = alt.Chart(tr_v_plot_df).mark_point().encode(
         x = alt.X('Number of Features:Q'),
         y = alt.Y('value:Q', title = 'Accuracy score'),
-        color = 'variable:N'
+        color = alt.Color('variable:N', legend = alt.Legend(title = ""))
         )
 
-    text = alt.Chart(tr_v_plot_df.query('variable == "Cross-Val Training error (cv = 10)"')).mark_text(dy = 13).encode(
+    text = alt.Chart(tr_v_plot_df.query('variable == "Cross-Val Training error (cv = 10)"')
+    ).mark_text(dy = 13
+    ).encode(
         x = alt.X('Number of Features:Q'),
         y = alt.Y('value:Q', title = 'Accuracy score'),
         text = alt.Text('n-gram_range:N'))
 
-    (line + point + text).properties(width = 700,
-         background = 'white').save(file_path_write + 'train_val_error.png', scale_factor = 2)
+    (line + point + text).configure_axis(labelFontSize=15,titleFontSize=15
+        ).configure_header(labelFontSize=15
+        ).configure_title(fontSize=20, anchor = 'middle'
+        ).properties(width = 700,
+         background = 'white', title = 'Training and Validation Error by n-gram Range and Number of Features'
+         ).save(file_path_write + 'train_val_error.png', scale_factor = 2)
 
     # Train model with chosen n-gram length range (2,2)
     cv_mnb = CountVectorizer(analyzer = 'char', ngram_range = (2,2))
@@ -127,7 +141,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
 
     clf_val_report = classification_report(
     y_validate, mnb.predict(X_val_t), output_dict=True)
-    clf_val_report_df = pd.DataFrame(clf_val_report).transpose()
+    clf_val_report_df = pd.DataFrame(clf_val_report).transpose().round(3)
     clf_val_report_df = clf_val_report_df.iloc[:3, :-1]
 
     # export cl_val_report_df and predictor_df as image file
@@ -141,7 +155,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     # Test scores
     clf_test_report = classification_report(
     y_test, mnb.predict(X_test_t), output_dict=True)
-    clf_test_report_df = pd.DataFrame(clf_test_report).transpose()
+    clf_test_report_df = pd.DataFrame(clf_test_report).transpose().round(3)
     clf_test_report_df = clf_test_report_df.iloc[:3, :-1]
     clf_test_report_df
 
@@ -155,6 +169,8 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     # Export tables with strongest predictors for various n-gram ranges
     ng_l_best = [(2,2), (3,3), (4,4)]
 
+    ng_l_best = [(2,2)]
+    
     for ng in ng_l_best:
         cv_mnb = CountVectorizer(analyzer = 'char', ngram_range = ng)
         X_train_t = cv_mnb.fit_transform(X_train)
@@ -165,24 +181,19 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
         vocab = cv_mnb.get_feature_names()
         weights = mnb.coef_.flatten()
         feat_df = pd.DataFrame({'features':vocab, 'weights':weights})
-        # Find most negative weight
-        least_coef = min(feat_df['weights'])
-        # check how many features share that weight
-        print("Number of features tied for strongest predictor:", len(feat_df.query('weights == '+str(least_coef))))
-        negative = feat_df.query('weights == '+str(least_coef))[['features']].sample(n = 50, random_state = 415).reset_index(drop=True)
-        #negative = negative.sample(n = 50).reset_index(drop=True)
-        features_100 = pd.concat([negative.iloc[:10].reset_index(drop = True),
-            negative.iloc[10:20].reset_index(drop = True),
-            negative.iloc[20:30].reset_index(drop = True),
-            negative.iloc[30:40].reset_index(drop = True),
-            negative.iloc[40:50].reset_index(drop = True)], axis = 1)
-        file_name_html = file_path_write + 'predictors'+str(ng)[1]+'_'+str(ng)[-2]+'.html'
+        # Find most positive weight (where 'accepted' is the negative class, and 'rejected' is positive)
+        max_coef = max(feat_df['weights'])
+        positive = feat_df.sort_values(by = 'weights', ascending = False)['features'].head(50).reset_index(drop = True)
+        features_50 = pd.concat([positive.iloc[:10].reset_index(drop = True),
+            positive.iloc[10:20].reset_index(drop = True),
+            positive.iloc[20:30].reset_index(drop = True),
+            positive.iloc[30:40].reset_index(drop = True),
+            positive.iloc[40:50].reset_index(drop = True)], axis = 1)
+        file_name_html = file_path_write + 'predictors_'+str(ng)[1]+'_'+str(ng)[-2]+'.html'
         file_name_png = file_path_write + 'predictors_'+str(ng)[1]+'_'+str(ng)[-2]+'.png'
-        features_100.to_html(file_name_html, index = False, header = False)
+        features_50.to_html(file_name_html, index = False, header = False)
         subprocess.call(
-            ['wkhtmltoimage -f png --width 0 ' + file_name_html + " " + file_name_png], shell=True)
-
-    
+             ['wkhtmltoimage -f png --width 0 ' + file_name_html + " " + file_name_png], shell=True)
   
 if __name__ == "__main__":
     main(opt["--file_path_read"],

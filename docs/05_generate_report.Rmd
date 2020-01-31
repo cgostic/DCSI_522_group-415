@@ -70,7 +70,7 @@ Additionally, using an `ngram_range = (2,2)` is preferable in that it greatly re
 
 
 **Model validation evaluation metrics:**
-```{r eval metrics validation, echo=FALSE, fig.align='center'}
+```{r eval metrics validation, echo=FALSE, fig.align='center', fig.retina=1}
 knitr::include_graphics("../results/clf_val_report.png")
 ```
 
@@ -81,14 +81,14 @@ Though the recall for the rejected class is fairly low, it's precision is decent
 The optimized model shows similar accuracy on the testing dataset. As seen below, our model achieves a testing accuracy score of 0.7397 overall. Like the validation metrics showed, the model predicts the `accepted` class better than it predicts the `rejected class` which is not ideal, but it also has a higher precision than recall, which, as discussed above, it preferable in this context.
 
 **Model testing evaluation metrics:**
-```{r eval metrics testing, echo=FALSE, fig.align='center'}
+```{r eval metrics testing, echo=FALSE, fig.align='center', fig.retina=1}
 knitr::include_graphics("../results/clf_test_report.png")
 ```
 
 The biggest predictor of rejection is the n-gram '88', though it's weight is very close in value to the weights in the top 20. listed below:
 
 **Top 50 Predictors of Rejection:**
-```{r best predictors, echo=FALSE, fig.align='center'}
+```{r best predictors, echo=FALSE, fig.align='center', fig.retina=1}
 knitr::include_graphics("../results/predictors_2_2.png")
 ```
 

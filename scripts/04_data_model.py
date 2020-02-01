@@ -56,6 +56,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
         file_path_read+filename_y_validate, index_col=0))
     y_test = np.squeeze(pd.read_csv(file_path_read+filename_y_test, index_col=0))
     
+
     # Test that data read in is correct to reproduce results
     assert X_train.shape == (2332,), "X_train is incorrect shape"
     assert sum(X_train.index) == 87392513, "X_train has incorrect observations"

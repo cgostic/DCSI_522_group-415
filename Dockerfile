@@ -42,3 +42,9 @@ RUN conda install -y -c conda-forge altair && conda install -y vega_datasets && 
 # Install imgkit and whtnltopdf
 RUN pip install imgkit && \
   apt-get install -y wkhtmltopdf
+
+# install subprocess.run python package
+RUN pip install subprocess.run
+
+# Launch bash shell
+CMD ["/bin/bash"]

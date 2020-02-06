@@ -107,7 +107,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     line = alt.Chart(tr_v_plot_df).mark_line().encode(
         x = alt.X('Number of Features:Q'),
         y = alt.Y('value:Q', title = 'Accuracy score'),
-        color = alt.Color('variable:N', legend = alt.Legend(title = "", orient = 'bottom'))
+        color = alt.Color('variable:N', legend = alt.Legend(title = ""))#, orient = 'bottom'))
         )
 
     point = alt.Chart(tr_v_plot_df).mark_point().encode(
@@ -126,6 +126,12 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     (line + point + text).configure_axis(labelFontSize=15,titleFontSize=15
         ).configure_header(labelFontSize=15
         ).configure_title(fontSize=20, anchor = 'middle'
+        ).configure_legend(orient = 'none', 
+                            legendX = 525, 
+                            legendY = 250,
+                            #strokeColor = 'black',
+                            fillColor = 'white',
+                            padding = 2
         ).properties(width = 700,
          background = 'white', title = 'Training and Validation Error by n-gram Range and Number of Features'
          ).save(file_path_write + 'train_val_error.png', scale_factor = 2)

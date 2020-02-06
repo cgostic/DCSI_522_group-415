@@ -96,19 +96,19 @@ def main(file_path_raw, file_path_pro, accepted_plates_csv, rejected_plates_csv,
     # Add column with length of n-gram
     counts['ng_length'] = counts['ngrams'].str.len()
 
-    n_g_len_chart = (alt.Chart(counts.query('ng_length%2 == 0')).mark_bar().encode(
+    n_g_len_chart = (alt.Chart(counts.query('ng_length%2 == 0')).mark_bar(color = 'darkorange').encode(
             x = alt.X('counts:O', 
-                title = "Frequency of given ngram in training data"),
-                #scale=alt.Scale(domain = (0,89))),
+                title = "N-gram frequency in training data",
+                axis=alt.Axis(labelAngle=0)),
             y = alt.Y("count()", scale=alt.Scale(type='log', base=10), title = 'Ngrams with X Freq.'),
             facet = alt.Facet('ng_length:N', title = 'n-gram length')
-        ).configure_axis(labelFontSize=15,titleFontSize=10
+        ).configure_axis(labelFontSize=13,titleFontSize=13
         ).configure_header(labelFontSize=15
         ).configure_title(fontSize=20, anchor = 'middle'
         ).properties(title = "Counts of n-gram frequency by length", 
-                    width = 400, 
-                    height = 80, 
-                    columns = 1,
+                    width = 200, 
+                    height = 200, 
+                    #columns = 1,
                     background = 'white'))
 
     n_g_len_chart.save(file_path_img+'ngram_length_counts.png', scale_factor = 2.0)

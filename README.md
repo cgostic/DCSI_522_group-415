@@ -41,6 +41,21 @@ python scripts/04_data_model.py --file_path_read="data/processed/" --filename_x_
 Rscript -e "rmarkdown::render('docs/05_generate_report.rmd')"
 ```
 
+### Running complete project
+
+To run the entire project, run the following commands in your command line/terminal from the root directory of this project:
+
+```
+make all
+```
+
+To clear the generated outputs from the scripts, run the following commands in your command line/terminal from the root directory of this project:
+
+```
+make clean
+```
+
+
 ## Package Dependencies
 
 ### Python 3.7.3 and Python packages:
@@ -52,9 +67,7 @@ Rscript -e "rmarkdown::render('docs/05_generate_report.rmd')"
 - docopt -- 0.6.2
 - imgkit -- 1.0.2
 - selenium --3.141.0
-- subprocess
-- canvas
-- wkhtmltopdf
+- subprocess.run --0.0.8
 
 ### R version 3.6.1 and R packages:
 
@@ -62,4 +75,8 @@ Rscript -e "rmarkdown::render('docs/05_generate_report.rmd')"
 - docopt --0.6.1
 - knitr --1.27.2
 - testit --0.11
+
+### Other dependencies:
+
+- wkhtmltopdf --0.12.4
 

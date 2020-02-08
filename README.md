@@ -1,3 +1,8 @@
+---
+output:
+  html_document: default
+  pdf_document: default
+---
 # L1c3nc3 t0 C0d3  
 **DCSI_522_group-415**  
 Authors: Keanna Knebel, Cari Gostic, Furqan Khan
@@ -55,7 +60,11 @@ To clear the generated outputs from the scripts, run the following commands in y
 make clean
 ```
 
+### Make file graph
 
+![](Makefile_graph.png)
+
+  
 ## Package Dependencies
 
 ### Python 3.7.3 and Python packages:

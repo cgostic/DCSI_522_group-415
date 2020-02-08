@@ -21,10 +21,16 @@ The final report can be found [here.](https://ubc-mds.github.io/DSCI_522_group_4
 1. Install [Docker](https://www.docker.com/get-started)
 2. Download/clone this repository
 3. Use the command line to navigate to the root of this downloaded/cloned repo
-4. Type the following:
+4. Type the following to run the analysis:
 
 ```
 docker run --rm -v /$(pwd):/home/522_project 522_proj:v1.0   make -C /home/522_project all
+```
+
+5. Type the following to clean up the analysis
+
+```
+docker run --rm -v /$(pwd):/home/522_project 522_proj:v1.0   make -C /home/522_project clean
 ```
 
 #### 2. Using Bash/Terminal 

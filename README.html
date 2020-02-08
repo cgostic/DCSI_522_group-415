@@ -389,9 +389,13 @@ Authors: Keanna Knebel, Cari Gostic, Furqan Khan</p>
 <li>Install <a href="https://www.docker.com/get-started">Docker</a></li>
 <li>Download/clone this repository</li>
 <li>Use the command line to navigate to the root of this downloaded/cloned repo</li>
-<li>Type the following:</li>
+<li>Type the following to run the analysis:</li>
 </ol>
 <pre><code>docker run --rm -v /$(pwd):/home/522_project 522_proj:v1.0   make -C /home/522_project all</code></pre>
+<ol start="5" style="list-style-type: decimal">
+<li>Type the following to clean up the analysis</li>
+</ol>
+<pre><code>docker run --rm -v /$(pwd):/home/522_project 522_proj:v1.0   make -C /home/522_project clean</code></pre>
 </div>
 <div id="using-bashterminal" class="section level4">
 <h4>2. Using Bash/Terminal</h4>

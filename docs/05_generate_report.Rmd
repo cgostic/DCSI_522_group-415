@@ -35,7 +35,7 @@ Definitive answers to these questions will benefit the the NYSDMV by reducing th
 ## Data
 The datasets used in this analysis include all accepted vanity plate submissions and rejected vanity plate submissions between October, 2010 and September, 2014. @wnyc The datasets were sourced from the WNYC Data News Team's license-plates Repository and can be found [here.](https://github.com/datanews/license-plates) The rejected plates were rejected during the second stage of review. In other words, they do not contain any character strings from the red-guide. The raw data has two columns, `Date` and `plate`, where `Date` is not included in this analysis. Another column `outcome`, was added before combining the accepted and rejected datasets to indicate the class of the observation as "accepted" or "rejected". The `plate` column contains the submitted alphanumeric character string of length 2 to 8. An initial evaluation shows a large imbalance in the count of observations for the two classes, with 131,990 in class "accepted" and 1,646 in class "rejected". 
 
-```{r class imbalance image, echo=FALSE, fig.align='center'}
+```{r class imbalance image, out.width = "300px", echo=FALSE, fig.align='center'}
 knitr::include_graphics("../results/examples_per_classification.png")
 ```
 

@@ -13,9 +13,9 @@ The final report can be found [here.](https://ubc-mds.github.io/DSCI_522_group_4
 
 ![](script_flowchart.png)
 
-### Usage
+## Usage
 
-#### 1. Using Docker
+### 1. Using Docker
 *note - the instructions in this section also depends on running this in a unix shell (e.g., terminal or Git Bash), if you are using Windows Command Prompt, replace `/$(pwd)` with PATH_ON_YOUR_COMPUTER.*
 
 1. Install [Docker](https://www.docker.com/get-started)
@@ -24,16 +24,16 @@ The final report can be found [here.](https://ubc-mds.github.io/DSCI_522_group_4
 4. Type the following to run the analysis:
 
 ```
-docker run --rm -v /$(pwd):/home/522_project 522_proj:v1.0   make -C /home/522_project all
+docker run --rm -v /$(pwd):/home/522_project fkhan72/522_proj:v1.0 make -C /home/522_project all
 ```
 
-5. Type the following to clean up the analysis
+5. Type the following to clean up the analysis  
 
 ```
-docker run --rm -v /$(pwd):/home/522_project 522_proj:v1.0   make -C /home/522_project clean
+docker run --rm -v /$(pwd):/home/522_project fkhan72/522_proj:v1.0 make -C /home/522_project clean
 ```
 
-#### 2. Using Bash/Terminal 
+### 2. Using Bash/Terminal 
 
 To replicate the analysis performed in this project, clone this GitHub repository, install the required [dependencies](#package-dependencies) listed below, and run the following commands in your command line/terminal from the root directory of this project:
 

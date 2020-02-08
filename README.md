@@ -1,8 +1,4 @@
----
-output:
-  html_document: default
-  pdf_document: default
----
+
 # L1c3nc3 t0 C0d3  
 **DCSI_522_group-415**  
 Authors: Keanna Knebel, Cari Gostic, Furqan Khan
@@ -28,7 +24,7 @@ The final report can be found [here.](https://ubc-mds.github.io/DSCI_522_group_4
 4. Type the following:
 
 ```
-docker run --rm -v /$(pwd):/home/522_project 522_proj:v1.0 make -C /home/522_project all
+docker run --rm -v /$(pwd):/home/522_project 522_proj:v1.0   make -C /home/522_project all
 ```
 
 #### 2. Using Bash/Terminal 

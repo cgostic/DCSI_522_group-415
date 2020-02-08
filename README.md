@@ -1,3 +1,4 @@
+
 # L1c3nc3 t0 C0d3  
 **DCSI_522_group-415**  
 Authors: Keanna Knebel, Cari Gostic, Furqan Khan
@@ -13,6 +14,26 @@ The final report can be found [here.](https://ubc-mds.github.io/DSCI_522_group_4
 ![](script_flowchart.png)
 
 ## Usage
+
+### 1. Using Docker
+*note - the instructions in this section also depends on running this in a unix shell (e.g., terminal or Git Bash), if you are using Windows Command Prompt, replace `/$(pwd)` with PATH_ON_YOUR_COMPUTER.*
+
+1. Install [Docker](https://www.docker.com/get-started)
+2. Download/clone this repository
+3. Use the command line to navigate to the root of this downloaded/cloned repo
+4. Type the following to run the analysis:
+
+```
+docker run --rm -v /$(pwd):/home/522_project fkhan72/522_proj:v1.0 make -C /home/522_project all
+```
+
+5. Type the following to clean up the analysis  
+
+```
+docker run --rm -v /$(pwd):/home/522_project fkhan72/522_proj:v1.0 make -C /home/522_project clean
+```
+
+### 2. Using Bash/Terminal 
 
 To replicate the analysis performed in this project, clone this GitHub repository, install the required [dependencies](#package-dependencies) listed below, and run the following commands in your command line/terminal from the root directory of this project:
 
@@ -41,7 +62,7 @@ python scripts/04_data_model.py --file_path_read="data/processed/" --filename_x_
 Rscript -e "rmarkdown::render('docs/05_generate_report.rmd')"
 ```
 
-### Running complete project
+#### Running complete project
 
 To run the entire project, run the following commands in your command line/terminal from the root directory of this project:
 
@@ -55,7 +76,11 @@ To clear the generated outputs from the scripts, run the following commands in y
 make clean
 ```
 
+#### Make file graph
 
+![](Makefile_graph.png)
+
+  
 ## Package Dependencies
 
 ### Python 3.7.3 and Python packages:

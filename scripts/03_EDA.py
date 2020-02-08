@@ -108,7 +108,7 @@ def main(file_path_raw, file_path_pro, accepted_plates_csv, rejected_plates_csv,
         ).properties(title = "Counts of n-gram frequency by length", 
                     width = 400, 
                     height = 80, 
-                    columns = 1,
+                   # columns = 1,
                     background = 'white'))
 
     n_g_len_chart.save(file_path_img+'ngram_length_counts.png', scale_factor = 2.0)

@@ -7,7 +7,7 @@ Authors: Keanna Knebel, Cari Gostic, Furqan Khan
 This project attempts to identify character strings that predict whether or not a vanity liscence plate submitted to the New York State Department of Motor Vehicles will be rejected. The dataset includes all accepted vanity license plate applications submitted between October, 2010 and September, 2014, and all license plates that passed an initial automatic screen against a red-list, but were ultimately rejected upon inspection by clerical staff. If strong predictors are identified, these may be added to the red list to make the initial screening of applications more effective, and therefore, reduce the time the clerical staff spends on inspecting re-submissions from applicants whose initial submissions were rejected in secondary screening.
 
 ## Report
-The final report can be found [here.](https://ubc-mds.github.io/DSCI_522_group_415/docs/05_generate_report.html)
+The final report can be found [here.](https://cgostic.github.io/license_2_code/docs/05_generate_report.html)
 
 ## Scipt Flow chart
 

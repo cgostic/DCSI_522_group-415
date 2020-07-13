@@ -1,5 +1,3 @@
-# author: Furqan Khan
-# date: 2020-01-24
 
 '''This script reads six .csv files.
 
@@ -56,14 +54,15 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
         file_path_read+filename_y_validate, index_col=0))
     y_test = np.squeeze(pd.read_csv(file_path_read+filename_y_test, index_col=0))
     
+#    print(X_validate['plate'].head(50))
 
     # Test that data read in is correct to reproduce results
-    assert X_train.shape == (2332,), "X_train is incorrect shape"
-    assert sum(X_train.index) == 87392513, "X_train has incorrect observations"
-    assert y_train.shape == (2332,), "y_train is incorrect shape"
-    assert X_validate.shape == (584,), "X_validate has incorrect shape"
-    assert sum(X_validate.index) == 21381421, "X_validate has correct observations"
-    assert y_validate.shape == (584,),"y_validate has incorrect shape"
+    assert X_train.shape == (2254,), "X_train is incorrect shape"
+    assert sum(X_train.index) == 78579191, "X_train has incorrect observations"
+    assert y_train.shape == (2254,), "y_train is incorrect shape"
+    assert X_validate.shape == (21382,), "X_validate has incorrect shape"
+    assert sum(X_validate.index) == 1392525471, "X_validate has correct observations"
+    assert y_validate.shape == (21382,),"y_validate has incorrect shape"
 
 
     pipeline = Pipeline(steps=[
@@ -94,7 +93,8 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     for ng in ng_list:
         cv = CountVectorizer(analyzer = 'char', ngram_range=ng)
         X_train_trs = cv.fit_transform(X_train)
-        X_validate_trs = cv.transform(X_validate)
+        #print(cv)
+        X_validate_trs = cv.transform(X_validate.values.astype('U'))
         num_f.append(len(cv.get_feature_names()))
         mnb = MultinomialNB().fit(X_train_trs, y_train)
         tr_err.append(np.mean(cross_val_score(mnb, X_train_trs, y_train, cv = 10)))
@@ -108,7 +108,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     line = alt.Chart(tr_v_plot_df).mark_line().encode(
         x = alt.X('Number of Features:Q'),
         y = alt.Y('value:Q', title = 'Accuracy score'),
-        color = alt.Color('variable:N', legend = alt.Legend(title = ""))
+        color = alt.Color('variable:N', legend = alt.Legend(title = "", orient = 'bottom'))
         )
 
     point = alt.Chart(tr_v_plot_df).mark_point().encode(
@@ -127,19 +127,14 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     (line + point + text).configure_axis(labelFontSize=15,titleFontSize=15
         ).configure_header(labelFontSize=15
         ).configure_title(fontSize=20, anchor = 'middle'
-        ).configure_legend(
-            orient = 'none',
-            fillColor = 'white', 
-            legendX = 475,
-            legendY = 250
         ).properties(width = 700,
-         background = 'white', title = 'CV Training and Validation Error by Number of Features'
+         background = 'white', title = 'Training and Validation Error by n-gram Range and Number of Features'
          ).save(file_path_write + 'train_val_error.png', scale_factor = 2)
 
     # Train model with chosen n-gram length range (2,2)
     cv_mnb = CountVectorizer(analyzer = 'char', ngram_range = (2,2))
     X_train_t = cv_mnb.fit_transform(X_train)
-    X_val_t = cv_mnb.transform(X_validate)
+    X_val_t = cv_mnb.transform(X_validate.values.astype('U'))
     X_test_t = cv_mnb.transform(X_test)
 
     # Report VALIDATION error for model with optimal n-gram length range
@@ -180,7 +175,7 @@ def main(file_path_read, filename_x_train, filename_x_validate, filename_x_test,
     for ng in ng_l_best:
         cv_mnb = CountVectorizer(analyzer = 'char', ngram_range = ng)
         X_train_t = cv_mnb.fit_transform(X_train)
-        X_val_t = cv_mnb.transform(X_validate)
+        X_val_t = cv_mnb.transform(X_validate.values.astype('U'))
         X_test_t = cv_mnb.transform(X_test)
         mnb = MultinomialNB().fit(X_train_t, y_train)
         # join feature names with respective weights into a dataframe

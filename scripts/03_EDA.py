@@ -1,6 +1,4 @@
 
-# author: Cari Gostic, Furqan Khan 
-# date: 2020-01-22
 
 '''This script reads in 5 .csv files located in the <file_path_data> folder:
           1. All accepted vanity plates
@@ -15,14 +13,13 @@
   folder. 
 
 
-Usage: scripts/03_EDA.py --file_path_raw=<file_path_data> --file_path_pro=<file_path_pro> --accepted_plates_csv=<accepted_plates_csv> --rejected_plates_csv=<rejected_plates_csv> --reduced_plate_csv=<reduced_plate_csv> --X_train_csv=<X_train_csv> --y_train_csv=<y_train_csv> --file_path_img=<file_path_img>
+Usage: scripts/03_EDA.py --file_path_raw=<file_path_data> --file_path_pro=<file_path_pro> --accepted_plates_csv=<accepted_plates_csv> --rejected_plates_csv=<rejected_plates_csv> --X_train_csv=<X_train_csv> --y_train_csv=<y_train_csv> --file_path_img=<file_path_img>
 
 Options:
 --file_path_raw=<file_path_data>  Path to raw data folder of .csv files
 --file_path_pro=<file_path_pro> Path to processed data folder
 --accepted_plates_csv=<accepted_plates_csv> filename of .csv with all accepted plates
 --rejected_plates_csv=<rejected_plates_csv> filename of .csv with all negative plates
---reduced_plate_csv=<reduced_plate_csv> filename of .csv of undersampled accepted plates combined with rejected plates
 --X_train_csv=<X_train_csv> filename of .csv with training feature dataset
 --y_train_csv=<y_train_csv> filename of .csv with training target dataset
 --file_path_img=<file_path_img> filepath to folder where images should be stored
@@ -32,7 +29,6 @@ Options:
 # file_path_pro='data/processed/'
 # accepted_plates_csv = 'accepted_plates.csv'
 # rejected_plates_csv = 'rejected_plates.csv'
-# reduced_plate_csv = 'full_vanity_plate_data.csv'
 # X_train_csv = 'X_train.csv'
 # y_train_csv = 'y_train.csv'
 # file_path_img = 'docs/imgs/'
@@ -49,11 +45,11 @@ from docopt import docopt
 
 opt = docopt(__doc__)
 
-def main(file_path_raw, file_path_pro, accepted_plates_csv, rejected_plates_csv, reduced_plate_csv, X_train_csv, y_train_csv, file_path_img):
+def main(file_path_raw, file_path_pro, accepted_plates_csv, rejected_plates_csv, X_train_csv, y_train_csv, file_path_img):
     # Load datasets
     full_rejected = pd.read_csv(file_path_raw + rejected_plates_csv)
     full_accepted = pd.read_csv(file_path_raw + accepted_plates_csv)
-    reduced_plate_df=pd.read_csv(file_path_pro + reduced_plate_csv)
+    # reduced_plate_df=pd.read_csv(file_path_pro + reduced_plate_csv)
     X_train = pd.read_csv(file_path_pro + X_train_csv, usecols = ['plate'])
     y_train = pd.read_csv(file_path_pro + y_train_csv, usecols = ['outcome'])
 
@@ -65,7 +61,8 @@ def main(file_path_raw, file_path_pro, accepted_plates_csv, rejected_plates_csv,
     # fit and transform X_train via CountVectorizer
     X_train_transformed = cv.fit_transform(X_train['plate'])
     # Make sure transformed data is correct shape
-    assert X_train_transformed.shape == (2332, 25889), 'sparse matrix should be of shape 2332 x 25889 to reproduce results'
+    # print('x_t_trans shape: ', X_train_transformed.shape)
+    assert X_train_transformed.shape == (2254, 25305), 'sparse matrix should be of shape 2254 x 25305 to reproduce results'
 
     # Explore full dataset of all rejected and accepted plates
     # Create outcome column
@@ -96,19 +93,19 @@ def main(file_path_raw, file_path_pro, accepted_plates_csv, rejected_plates_csv,
     # Add column with length of n-gram
     counts['ng_length'] = counts['ngrams'].str.len()
 
-    n_g_len_chart = (alt.Chart(counts.query('ng_length%2 == 0')).mark_bar(color = 'darkorange').encode(
+    n_g_len_chart = (alt.Chart(counts.query('ng_length%2 == 0')).mark_bar().encode(
             x = alt.X('counts:O', 
-                title = "N-gram freq. in training data", axis=alt.Axis(labelAngle=0)),
+                title = "Frequency of given ngram in training data"),
                 #scale=alt.Scale(domain = (0,89))),
-            y = alt.Y("count()", scale=alt.Scale(type='log', base=10), title = 'N-grams with X freq.'),
+            y = alt.Y("count()", scale=alt.Scale(type='log', base=10), title = 'Ngrams with X Freq.'),
             facet = alt.Facet('ng_length:N', title = 'n-gram length')
-        ).configure_axis(labelFontSize=10,titleFontSize=12
+        ).configure_axis(labelFontSize=15,titleFontSize=10
         ).configure_header(labelFontSize=15
         ).configure_title(fontSize=20, anchor = 'middle'
         ).properties(title = "Counts of n-gram frequency by length", 
-                    width = 175, 
-                    height = 125, 
-                   # columns = 1,
+                    width = 400, 
+                    height = 80, 
+                    columns = 1,
                     background = 'white'))
 
     n_g_len_chart.save(file_path_img+'ngram_length_counts.png', scale_factor = 2.0)
@@ -190,7 +187,6 @@ if __name__ == "__main__":
     opt["--file_path_pro"],
     opt["--accepted_plates_csv"], 
     opt["--rejected_plates_csv"], 
-    opt["--reduced_plate_csv"],
     opt["--X_train_csv"], 
     opt["--y_train_csv"],
     opt["--file_path_img"])

@@ -1,6 +1,4 @@
-# author: Cari Gostic
-# date: 2020-21-01
-#
+
 #
 "This script downloads 2 .csv files with the same columns,  
 combines them into a single dataframe, and exports this dataframe 
